@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+</head>
+<body>
+<button id="click">Click</button>
+<script>
+    var socket = io.connect('https://553ecd842a24.ngrok.io');
+    const live_socket = io('/ping', {autoConnect: false});
+
+    socket.on('connect', ()=>{
+        console.log('SOCKET CONNECTED')
+
+
+    })
+
+    socket.on('send data', ()=>{
+        console.log('send data')
+        socket.emit( 'my event', 1 )
+    })
+
+    socket.on('frame_recieved', (data)=> {
+        let blob = new Blob([data], {type: 'image/jpeg'})
+        console.log('frame recieved')
+        console.log(data)
+    })
+
+    live_socket.on('ping event', function (name, fn) {
+     fn('pong');
+    });
+
+    socket.on( 'my response', function( msg ) {
+        console.log('response')
+        console.log( msg )
+    })
+
+
+    socket.on("message", function(msg) {
+        console.log('message')
+        $('#log').append('<p>Received: ' + msg.data + '</p>');
+    });
+
+    let btn = document.getElementById('click')
+    btn.onclick = function(){
+        fetch('https://a1fc1246bf41.ngrok.io/ping')
+    }
+</script>
+</body>
+</html>
